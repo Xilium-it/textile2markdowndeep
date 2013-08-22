@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Xilium
 {
-    public class Textile2Markdown
+    public class Textile2MarkdownDeep
     {
-		private Textile2Markdown() {
+		private Textile2MarkdownDeep() {
 			
 		}
 

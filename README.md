@@ -14,6 +14,6 @@ string textile = "h1. Title";
 textile += "\nLorem ipsum dolor sit amet, consectetur adipiscing elit.";
 textile += "\nMaecenas at adipiscing lectus. Mauris porttitor.";
 
-string markdonw = Xilium.Textile2Markdown.Convert(textile);
+string markdonw = Xilium.Textile2MarkdownDeep.Convert(textile);
 
 ```
