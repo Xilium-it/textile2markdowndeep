@@ -10,7 +10,10 @@ This MarkdownDeep version implements some feature for table that original markdo
 
 ```cs
 
-string textile = "h1. Title\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at adipiscing lectus. Mauris porttitor.";
+string textile = "h1. Title";
+textile += "\nLorem ipsum dolor sit amet, consectetur adipiscing elit.";
+textile += "\nMaecenas at adipiscing lectus. Mauris porttitor.";
+
 string markdonw = Xilium.Textile2Markdown.Convert(textile);
 
 ```
