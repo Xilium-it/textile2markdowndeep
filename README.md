@@ -11,6 +11,7 @@ This MarkdownDeep version implements some feature for table that original markdo
 ```cs
 
 string textile = "h1. Title";
+textile += "\n";
 textile += "\nLorem ipsum dolor sit amet, consectetur adipiscing elit.";
 textile += "\nMaecenas at adipiscing lectus. Mauris porttitor.";
 
