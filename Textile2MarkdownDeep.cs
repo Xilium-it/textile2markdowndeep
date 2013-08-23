@@ -40,17 +40,17 @@ namespace Xilium
 			}, RegexOptions.Multiline);
 
 			// STRONG: "*<text>*", "**<text>**" > "**<text>**"
-			fReturn = Regex.Replace(fReturn, @"(?<=[\n\r\s])(?<begin>\*{1,2})(?<val>[^\s*]|[^\s*][^*\n\r\t\v]*[^\s*])\k<begin>", m => {
+			fReturn = Regex.Replace(fReturn, @"(?<=([\n\r\s]|^))(?<begin>\*{1,2})(?<val>[^\s*]|[^\s*][^*\n\r\t\v]*[^\s*])\k<begin>", m => {
 				return "**" + m.Groups["val"].Value + "**";
 			});
 
 			// EN: "_<text>_", "__<text>__" > "*<text>*"
-			fReturn = Regex.Replace(fReturn, @"(?<=[\n\r\s])(?<begin>_{1,2})(?<val>[^\s_]|[^\s_][^_\n\r\t\v]*[^\s_])\k<begin>", m => {
+			fReturn = Regex.Replace(fReturn, @"(?<=([\n\r\s]|^))(?<begin>_{1,2})(?<val>[^\s_]|[^\s_][^_\n\r\t\v]*[^\s_])\k<begin>", m => {
 				return "*" + m.Groups["val"].Value + "*";
 			});
 
 			// U: "+<text>+" > "*<text>*"
-			fReturn = Regex.Replace(fReturn, @"(?<=[\n\r\s])(?<begin>\+{1,2})(?<val>[^\s+]|[^\s+][^+\n\r\t\v]*[^\s+])\k<begin>", m => {
+			fReturn = Regex.Replace(fReturn, @"(?<=([\n\r\s]|^))(?<begin>\+{1,2})(?<val>[^\s+]|[^\s+][^+\n\r\t\v]*[^\s+])\k<begin>", m => {
 				return "*" + m.Groups["val"].Value + "*";
 			});
 
