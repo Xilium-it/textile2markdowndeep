@@ -3,7 +3,7 @@ textile2markdowndeep
 
 Small procedure to convert textile formatted string to markdown formatted string.
 
-This procedure borns to convert `Textile` formatted string to [Xilium-it MarkdownDeep](../../../MarkdownDeep) version.  
+This procedure borns to convert `Textile` formatted string to [Xilium MarkdownDeep](../../../MarkdownDeep) version.  
 This MarkdownDeep version implements some feature for table that original markdowndeep version don't provide.
 
 ## How to use
