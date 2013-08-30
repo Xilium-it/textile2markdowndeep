@@ -35,8 +35,8 @@ namespace Xilium
 			}, RegexOptions.Multiline);
 
 			// BR: "\n" > "  \n"
-			fReturn = Regex.Replace(fReturn, @"\.(\r?\n)(?![\n\r])", m => {
-				return ".  " + m.Groups[1].Value;
+			fReturn = Regex.Replace(fReturn, @"([\.?!:])(\r?\n)(?![\n\r])", m => {
+				return m.Groups[1].Value + "  " + m.Groups[2].Value;
 			}, RegexOptions.Multiline);
 
 			// STRONG: "*<text>*", "**<text>**" > "**<text>**"
