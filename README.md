@@ -8,6 +8,8 @@ This MarkdownDeep version implements some feature for table that original markdo
 
 ## How to use
 
+This is an example code to use the method:
+
 ```cs
 
 string textile = "h1. Title";
