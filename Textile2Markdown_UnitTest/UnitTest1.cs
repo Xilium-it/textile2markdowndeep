@@ -1,10 +1,18 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+
+using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Textile2Markdown_UnitTest {
 	[TestClass]
 	public class UnitTest1 {
+
+		private const string genericPhrase = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+		private const string rowSep = "\r\n";
 
 		[TestMethod]
 		public void TitleTest1() {
@@ -50,17 +58,169 @@ namespace Textile2Markdown_UnitTest {
 		}
 
 		[TestMethod]
-		public void Table1_headerOnly() {
+		public void Table1_rows1() {
 			var strInput = new StringBuilder();
-			strInput.AppendLine("| Head 1 | Head 2 | Head 3 |");
-			
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+
+			var strOutput = new StringBuilder();
+			strOutput.AppendLine("|---|---|---|");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+
+			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()), "Text starts with table");
+
+			strInput.Insert(0, genericPhrase + rowSep);
+			strOutput.Insert(0, genericPhrase + rowSep);
+			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()), "Text starts with generic phrase");
+
+		}
+
+
+		[TestMethod]
+		public void Table1_rows5() {
+			var strInput = new StringBuilder();
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+
+			var strOutput = new StringBuilder();
+			strOutput.AppendLine("|---|---|---|");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+
+			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()), "Text starts with table");
+
+			strInput.Insert(0, genericPhrase + rowSep);
+			strOutput.Insert(0, genericPhrase + rowSep);
+			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()), "Text starts with generic phrase");
+
+		}
+
+		[TestMethod]
+		public void Table2_heads1() {
+			var strInput = new StringBuilder();
+			strInput.AppendLine("|_. Head 1 |_. Head 2 |_. Head 3 |");
+
 			var strOutput = new StringBuilder();
 			strOutput.AppendLine("| Head 1 | Head 2 | Head 3 |");
 			strOutput.AppendLine("|---|---|---|");
 
-			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()));
+			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()), "Text starts with table");
+
+			strInput.Insert(0, genericPhrase + rowSep);
+			strOutput.Insert(0, genericPhrase + rowSep);
+			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()), "Text starts with generic phrase");
 
 		}
 
+		public void Table2_heads3() {
+			var strInput = new StringBuilder();
+			strInput.AppendLine("|_. Head 1 |_. Head 2 |_. Head 3 |");
+			strInput.AppendLine("|_. Head 1 |_. Head 2 |_. Head 3 |");
+			strInput.AppendLine("|_. Head 1 |_. Head 2 |_. Head 3 |");
+
+			var strOutput = new StringBuilder();
+			strOutput.AppendLine("| Head 1 | Head 2 | Head 3 |");
+			strOutput.AppendLine("| Head 1 | Head 2 | Head 3 |");
+			strOutput.AppendLine("| Head 1 | Head 2 | Head 3 |");
+			strOutput.AppendLine("|---|---|---|");
+
+			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()), "Text starts with table");
+
+			strInput.Insert(0, genericPhrase + rowSep);
+			strOutput.Insert(0, genericPhrase + rowSep);
+			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()), "Text starts with generic phrase");
+
+		}
+
+		[TestMethod]
+		public void Table3_heads1rows1() {
+			var strInput = new StringBuilder();
+			strInput.AppendLine("|_. Head 1 |_. Head 2 |_. Head 3 |");
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+
+			var strOutput = new StringBuilder();
+			strOutput.AppendLine("| Head 1 | Head 2 | Head 3 |");
+			strOutput.AppendLine("|---|---|---|");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+
+			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()), "Text starts with table");
+
+			strInput.Insert(0, genericPhrase + rowSep);
+			strOutput.Insert(0, genericPhrase + rowSep);
+			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()), "Text starts with generic phrase");
+
+		}
+
+		[TestMethod]
+		public void Table3_heads1rows5() {
+			var strInput = new StringBuilder();
+			strInput.AppendLine("|_. Head 1 |_. Head 2 |_. Head 3 |");
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+
+			var strOutput = new StringBuilder();
+			strOutput.AppendLine("| Head 1 | Head 2 | Head 3 |");
+			strOutput.AppendLine("|---|---|---|");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+
+			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()), "Text starts with table");
+
+			strInput.Insert(0, genericPhrase + rowSep);
+			strOutput.Insert(0, genericPhrase + rowSep);
+			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()), "Text starts with generic phrase");
+
+		}
+
+		[TestMethod]
+		public void Table4_advance() {
+			var strInput = new StringBuilder();
+			strInput.AppendLine("|_\\3. Head colspan1 |");
+			strInput.AppendLine("|_. Head 1 |_. Head 2 |_>. Head right |");
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strInput.AppendLine("|\\2. Row 1+2 | Row 3 |");
+			strInput.AppendLine("|<. Row left |=. Row center |>. Row right |");
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strInput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+
+			var strOutput = new StringBuilder();
+			strOutput.AppendLine("| Head colspan1 |||");
+			strOutput.AppendLine("| Head 1 | Head 2 | Head right :|");
+			strOutput.AppendLine("|---|---|---|");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strOutput.AppendLine("| Row 1+2 || Row 3 |");
+			strOutput.AppendLine("|: Row left |: Row center :| Row right :|");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+			strOutput.AppendLine("| Row 1 | Row 2 | Row 3 |");
+
+			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()), "Text starts with table");
+
+			strInput.Insert(0, genericPhrase + rowSep);
+			strOutput.Insert(0, genericPhrase + rowSep);
+			Assert.AreEqual(strOutput.ToString(), Xilium.Textile2MarkdownDeep.Convert(strInput.ToString()), "Text starts with generic phrase");
+
+		}
+
+		/*
+		[TestMethod]
+		public void GetRowSep() {
+			var strInput = new StringBuilder();
+			strInput.AppendLine("FirstRow");
+			strInput.AppendLine("SecondRow");
+
+			Assert.AreEqual(Regex.Escape(Xilium.Textile2MarkdownDeep.getRowSep(strInput.ToString())), Regex.Escape(rowSep));
+		}
+		*/
 	}
 }

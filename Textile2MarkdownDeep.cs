@@ -13,17 +13,50 @@ namespace Xilium
 			
 		}
 
+		/// <summary>
+		/// Find chars used in row separator
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		private static string getRowSep(string text) {
+			var match = Regex.Match(text, @"[\r\n]+");
+			if (match.Success == false) return "\n";	// not found. Returns default value.
+			string fReturn = "";
+			for (int i = 0; i < match.Value.Length; i++) {
+				char c = match.Value[i];
+				if (fReturn.Contains(c)) break;
+				fReturn += c;
+			}
+			return fReturn;
+		}
+
+		private static string repeat(string text, int times) {
+			var fReturn = new System.Text.StringBuilder();
+			for (int i = 0; i < times; i++) {
+				fReturn.Append(text);
+			}
+			return fReturn.ToString();
+		}
+
+		private static int charsCount(string text, char find) {
+			return text.Where(c => c == find).Count();
+		}
+
 		public static string Convert(string textileFormatString) {
 			var fReturn = textileFormatString;
 
+			// Find row separator ("\n" or "\r" or "\r\n" ?)
+			var rowSep = getRowSep(textileFormatString);
+			var ptnRowSep = Regex.Escape(rowSep);
+
 			// UL LI: "* <text>" > "* <text>". NOTE: Markdown need white row before list.
-			fReturn = Regex.Replace(fReturn, @"^(?!\*\s)(?<row1>.+)[\r]?[\n](?<row2>\*\s)", m => {
-				return m.Groups["row1"].Value + "\n\n* ";
+			fReturn = Regex.Replace(fReturn, @"^(?!\*\s)(?<row1>.+)" + ptnRowSep + @"(?<row2>\*\s)", m => {
+				return m.Groups["row1"].Value +  repeat(rowSep, 2) + "* ";
 			}, RegexOptions.Multiline);
 
 			// OL LI: "# <testo>" > "0. <testo>". NOTE: Markdown need white row before list
-			fReturn = Regex.Replace(fReturn, @"^(?!#\s)(?<row1>.+)[\r]?[\n](?<row2>#\s)", m => {
-				return m.Groups["row1"].Value + "\n\n0. ";
+			fReturn = Regex.Replace(fReturn, @"^(?!#\s)(?<row1>.+)" + ptnRowSep + @"(?<row2>#\s)", m => {
+				return m.Groups["row1"].Value + repeat(rowSep, 2) + "0. ";
 			}, RegexOptions.Multiline);
 			fReturn = Regex.Replace(fReturn, @"^#\s", m => {
 				return "0. ";
@@ -34,9 +67,9 @@ namespace Xilium
 				return (new string('#', int.Parse(m.Groups[1].Value))) + " ";
 			}, RegexOptions.Multiline);
 
-			// BR: "\n" > "  \n"
-			fReturn = Regex.Replace(fReturn, @"([\.?!:])(\r?\n)(?![\n\r])", m => {
-				return m.Groups[1].Value + "  " + m.Groups[2].Value;
+			// BR: "...<endPhrase>\n" > "...<endPhrase>  \n"
+			fReturn = Regex.Replace(fReturn, @"([\.?!:])(" + ptnRowSep + @")(?![\n\r|])", m => {
+				return m.Groups[1].Value + "  " + rowSep;
 			}, RegexOptions.Multiline);
 
 			// STRONG: "*<text>*", "**<text>**" > "**<text>**"
@@ -67,15 +100,39 @@ namespace Xilium
 				});
 			}, RegexOptions.Multiline);
 
-			// TABLE, step 2: add header row
-			fReturn = Regex.Replace(fReturn, @"^(?!\|)(?<preTabRow>[^\n\r]*)(?<headRow>\r?\n(?<subHeadRow>\|# [^\n\r]+))+", m => {
-				int numCols = m.Groups["subHeadRow"].Value.Where(c => c == '|').Count() - 1;
+			// TABLE, step 2, table without header: add header separator row ("|--|--... ...|") before table
+			Func<Match, string> fncTable_step2_replace = (Match m) => {
+				int numCols = charsCount(m.Groups["bodyRow"].Value, '|') - 1;
 				var fRet = new System.Text.StringBuilder();
-				fRet.Append(m.Value.Replace("|# ", "| "));
-				fRet.Append("\n|");
-				for (var i = 0; i < numCols; i++) fRet.Append("---|");
+				if (m.Groups["preTabRow"].Success) {
+					fRet.Append(m.Groups["preTabRow"].Value);
+					fRet.Append(rowSep);
+				}
+				fRet.Append("|");
+				fRet.Append(repeat("---|", numCols));
+				fRet.Append(rowSep);
+				fRet.Append(m.Groups["bodyRow"].Value);
 				return fRet.ToString();
-			}, RegexOptions.Multiline);
+			};
+			// Text starts with header table
+			fReturn = Regex.Replace(fReturn, @"^(?<bodyRow>\| [^\n\r]+)", m => fncTable_step2_replace(m), RegexOptions.Singleline);
+			// Header table is inside the text
+			fReturn = Regex.Replace(fReturn, @"^(?!\|)(?<preTabRow>[^\n\r]*)" + ptnRowSep + @"(?<bodyRow>\| [^\n\r]+)", m => fncTable_step2_replace(m), RegexOptions.Multiline);
+
+			// TABLE, step 3, table with header: add header separator row ("|--|--... ...|") after table header
+			Func<Match, string> fncTable_step3_replace = (Match m) => {
+				int numCols = charsCount(m.Groups["subHeadRow"].Value, '|') - 1;
+				var fRet = new System.Text.StringBuilder();
+				fRet.Append(m.Value.Replace("|# ", "| ").Replace("|:# ", "|: "));
+				fRet.Append(rowSep);
+				fRet.Append("|");
+				fRet.Append(repeat("---|", numCols));
+				return fRet.ToString();
+			};
+			// Text starts with header table
+			fReturn = Regex.Replace(fReturn, @"^(?<headRow>(" + ptnRowSep + @")?(?<subHeadRow>\|:?# [^\n\r]+))+", m => fncTable_step3_replace(m), RegexOptions.Singleline);
+			// Header table is inside the text
+			fReturn = Regex.Replace(fReturn, @"^(?!\|)(?<preTabRow>[^\n\r]*)(?<headRow>" + ptnRowSep + @"(?<subHeadRow>\|:?# [^\n\r]+))+", m => fncTable_step3_replace(m), RegexOptions.Multiline);
 
 			return fReturn;
 		}
