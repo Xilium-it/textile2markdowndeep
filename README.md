@@ -1,7 +1,7 @@
 textile2markdowndeep
 ====================
 
-Small procedure to convert **textile** formatted string to *markdown* formatted string, or better [**MarkdownDeep**](/Xilium.it/MarkdownDeep).
+Small procedure to convert **textile** formatted string to **markdown** formatted string.
 
 This procedure borns to convert `Textile` formatted string to [Xilium MarkdownDeep](../../../MarkdownDeep) version.  
 This MarkdownDeep version implements some feature for table that original markdowndeep version don't provide.
@@ -12,12 +12,36 @@ This MarkdownDeep version implements some feature for table that original markdo
 
 string textile = "h1. Title";
 textile += "\n";
-textile += "\nLorem ipsum dolor sit amet, consectetur adipiscing elit.";
-textile += "\nMaecenas at adipiscing lectus. Mauris porttitor.";
+textile += "\nLorem ipsum dolor sit amet, *consectetur* adipiscing elit.";
+textile += "\nMaecenas _at adipiscing_ lectus. Mauris porttitor.";
+textile += "\n";
+textile += "\n|_\3. My table with colspan 3 |";
+textile += "\n| 8.00 | breakfast | lorem... |";
+textile += "\n| 12.00 | lounch | lorem... |";
+textile += "\n| 16.00 | TV | lorem... |";
+textile += "\n| 19.00 | dinner | lorem... |";
 
 string markdonw = Xilium.Textile2MarkdownDeep.Convert(textile);
 
 ```
+
+### Output
+
+```
+# Title
+
+Lorem ipsum dolor sit amet, **consectetur** adipiscing elit.
+Maecenas *at adipiscing* lectus. Mauris porttitor.
+
+| My table with colspan 3 |||
+|---|---|---|
+| 8.00 | breakfast | lorem... |
+| 12.00 | lounch | lorem... |
+| 16.00 | TV | lorem... |
+| 19.00 | dinner | lorem... |
+
+```
+
 
 ## The MIT License (MIT)
 
