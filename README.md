@@ -1,7 +1,7 @@
 textile2markdowndeep
 ====================
 
-Small procedure to convert textile formatted string to markdown formatted string.
+Small procedure to convert **textile** formatted string to *markdown* formatted string, or better [**MarkdownDeep**](/Xilium.it/MarkdownDeep).
 
 This procedure borns to convert `Textile` formatted string to [Xilium MarkdownDeep](../../../MarkdownDeep) version.  
 This MarkdownDeep version implements some feature for table that original markdowndeep version don't provide.
