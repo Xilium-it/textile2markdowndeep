@@ -37,15 +37,15 @@ namespace Textile2Markdown_UnitTest {
 		}
 
 		[TestMethod]
-		public void BoldAndEM() {
+		public void BoldAndEMAndCITE() {
 
 			Assert.AreEqual("Lorem ipsum dolor sit amet, consectetur adipiscing elit.", Xilium.Textile2MarkdownDeep.Convert("Lorem ipsum dolor sit amet, consectetur adipiscing elit."));
 
-			Assert.AreEqual("Lorem ipsum dolor sit amet, **consectetur** adipiscing elit.", Xilium.Textile2MarkdownDeep.Convert("Lorem ipsum dolor sit amet, *consectetur* adipiscing elit."));
+			Assert.AreEqual("Lorem ipsum dolor sit amet, **consectetur** adipiscing elit, <cite>bla bla bla</cite>.", Xilium.Textile2MarkdownDeep.Convert("Lorem ipsum dolor sit amet, *consectetur* adipiscing elit, ??bla bla bla??."));
 
-			Assert.AreEqual("Lorem ipsum dolor sit amet, *consectetur* adipiscing elit.", Xilium.Textile2MarkdownDeep.Convert("Lorem ipsum dolor sit amet, _consectetur_ adipiscing elit."));
+			Assert.AreEqual("Lorem ipsum dolor sit amet, *consectetur* adipiscing elit, <cite>bla bla bla</cite>.", Xilium.Textile2MarkdownDeep.Convert("Lorem ipsum dolor sit amet, _consectetur_ adipiscing elit, ??bla bla bla??."));
 
-			Assert.AreEqual("Lorem ipsum dolor sit amet, **consectetur** *adipiscing elit*.", Xilium.Textile2MarkdownDeep.Convert("Lorem ipsum dolor sit amet, **consectetur** _adipiscing elit_."));
+			Assert.AreEqual("Lorem ipsum dolor sit amet, **consectetur** *adipiscing elit*, <cite>bla bla bla</cite>.", Xilium.Textile2MarkdownDeep.Convert("Lorem ipsum dolor sit amet, **consectetur** _adipiscing elit_, ??bla bla bla??."));
 		}
 
 		[TestMethod]

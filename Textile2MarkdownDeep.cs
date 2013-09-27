@@ -82,6 +82,11 @@ namespace Xilium
 				return "*" + m.Groups["val"].Value + "*";
 			});
 
+			// CITE: "??<text>??" > "<<cite>><text><</cite>>"
+			fReturn = Regex.Replace(fReturn, @"(?<=([\n\r\s]|^))(?<begin>\?{2})(?<val>[^\s_]|[^\s_][^_\n\r\t\v]*[^\s_])\k<begin>", m => {
+				return "<cite>" + m.Groups["val"].Value + "</cite>";
+			});
+
 			// U: "+<text>+" > "*<text>*"
 			fReturn = Regex.Replace(fReturn, @"(?<=([\n\r\s]|^))(?<begin>\+{1,2})(?<val>[^\s+]|[^\s+][^+\n\r\t\v]*[^\s+])\k<begin>", m => {
 				return "*" + m.Groups["val"].Value + "*";

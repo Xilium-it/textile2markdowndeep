@@ -7,8 +7,8 @@
     <ProjectGuid>{DED77D76-B322-4429-A2EC-50E71249900F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Textile2Markdown</RootNamespace>
-    <AssemblyName>Textile2Markdown</AssemblyName>
+    <RootNamespace>Xilium.Textile2Markdown</RootNamespace>
+    <AssemblyName>Xilium.Textile2Markdown</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
