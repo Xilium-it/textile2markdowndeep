@@ -42,55 +42,75 @@ namespace Xilium
 			return text.Where(c => c == find).Count();
 		}
 
-		public static string Convert(string textileFormatString) {
-			var fReturn = textileFormatString;
-
-			// Find row separator ("\n" or "\r" or "\r\n" ?)
-			var rowSep = getRowSep(textileFormatString);
-			var ptnRowSep = Regex.Escape(rowSep);
-
+		public static string ConvertUlLi(string textileFormatString, string rowSep, string ptnRowSep) {
 			// UL LI: "* <text>" > "* <text>". NOTE: Markdown need white row before list.
-			fReturn = Regex.Replace(fReturn, @"^(?!\*\s)(?<row1>.+)" + ptnRowSep + @"(?<row2>\*\s)", m => {
-				return m.Groups["row1"].Value +  repeat(rowSep, 2) + "* ";
+			return Regex.Replace(textileFormatString, @"^(?!\*\s)(?<row1>.+)" + ptnRowSep + @"(?<row2>\*\s)", m => {
+				return m.Groups["row1"].Value + repeat(rowSep, 2) + "* ";
 			}, RegexOptions.Multiline);
+		}
 
+		public static string ConvertOlLi(string textileFormatString, string rowSep, string ptnRowSep) {
 			// OL LI: "# <testo>" > "0. <testo>". NOTE: Markdown need white row before list
-			fReturn = Regex.Replace(fReturn, @"^(?!#\s)(?<row1>.+)" + ptnRowSep + @"(?<row2>#\s)", m => {
+			var fReturn = Regex.Replace(textileFormatString, @"^(?!#\s)(?<row1>.+)" + ptnRowSep + @"(?<row2>#\s)", m => {
 				return m.Groups["row1"].Value + repeat(rowSep, 2) + "0. ";
 			}, RegexOptions.Multiline);
 			fReturn = Regex.Replace(fReturn, @"^#\s", m => {
 				return "0. ";
 			}, RegexOptions.Multiline);
+			return fReturn;
+		}
 
+		public static string ConvertHx(string textileFormatString, string rowSep, string ptnRowSep) {
 			// Hx: ".h<n>" > "#{n}"
-			fReturn = Regex.Replace(fReturn, @"^h([1-6])\. ", m => {
+			return Regex.Replace(textileFormatString, @"^h([1-6])\. ", m => {
 				return (new string('#', int.Parse(m.Groups[1].Value))) + " ";
 			}, RegexOptions.Multiline);
+		}
 
+		public static string ConvertBr(string textileFormatString, string rowSep, string ptnRowSep) {
 			// BR: "...<endPhrase>\n" > "...<endPhrase>  \n"
-			fReturn = Regex.Replace(fReturn, @"([\.?!:])(" + ptnRowSep + @")(?![\n\r|])", m => {
+			return Regex.Replace(textileFormatString, @"([\.?!:])(" + ptnRowSep + @")(?![\n\r|])", m => {
 				return m.Groups[1].Value + "  " + rowSep;
 			}, RegexOptions.Multiline);
+		}
 
+		public static string ConvertStrong(string textileFormatString, string rowSep, string ptnRowSep) {
 			// STRONG: "*<text>*", "**<text>**" > "**<text>**"
-			fReturn = Regex.Replace(fReturn, @"(?<=([\n\r\s]|^))(?<begin>\*{1,2})(?<val>[^\s*]|[^\s*][^*\n\r\t\v]*[^\s*])\k<begin>", m => {
+			return Regex.Replace(textileFormatString, @"(?<=([\n\r\s""!]|^))(?<begin>\*{1,2})(?<val>[^\s*]|[^\s*][^*\n\r\t\v]*[^\s*])\k<begin>", m => {
 				return "**" + m.Groups["val"].Value + "**";
 			});
+		}
 
+		public static string ConvertEn(string textileFormatString, string rowSep, string ptnRowSep) {
 			// EN: "_<text>_", "__<text>__" > "*<text>*"
-			fReturn = Regex.Replace(fReturn, @"(?<=([\n\r\s]|^))(?<begin>_{1,2})(?<val>[^\s_]|[^\s_][^_\n\r\t\v]*[^\s_])\k<begin>", m => {
+			return Regex.Replace(textileFormatString, @"(?<=([\n\r\s""!]|^))(?<begin>_{1,2})(?<val>[^\s_]|[^\s_][^_\n\r\t\v]*[^\s_])\k<begin>", m => {
 				return "*" + m.Groups["val"].Value + "*";
 			});
+		}
 
+		public static string ConvertCite(string textileFormatString, string rowSep, string ptnRowSep) {
 			// CITE: "??<text>??" > "<<cite>><text><</cite>>"
-			fReturn = Regex.Replace(fReturn, @"(?<=([\n\r\s]|^))(?<begin>\?{2})(?<val>[^\s_]|[^\s_][^_\n\r\t\v]*[^\s_])\k<begin>", m => {
+			return Regex.Replace(textileFormatString, @"(?<=([\n\r\s""!]|^))(?<begin>\?{2})(?<val>[^\s?]|[^\s?][^?\n\r\t\v]*[^\s?])\k<begin>", m => {
 				return "<cite>" + m.Groups["val"].Value + "</cite>";
 			});
+		}
 
+		public static string ConvertU(string textileFormatString, string rowSep, string ptnRowSep) {
 			// U: "+<text>+" > "*<text>*"
-			fReturn = Regex.Replace(fReturn, @"(?<=([\n\r\s]|^))(?<begin>\+{1,2})(?<val>[^\s+]|[^\s+][^+\n\r\t\v]*[^\s+])\k<begin>", m => {
+			return Regex.Replace(textileFormatString, @"(?<=([\n\r\s""!]|^))(?<begin>\+{1,2})(?<val>[^\s+]|[^\s+][^+\n\r\t\v]*[^\s+])\k<begin>", m => {
 				return "*" + m.Groups["val"].Value + "*";
 			});
+		}
+
+		public static string ConvertA(string textileFormatString, string rowSep, string ptnRowSep) {
+			// A: "\"<text>\":<url>" > "[<text>](<url>)"
+			return Regex.Replace(textileFormatString, @"(?<=([\n\r\s]|^))(?<begin>""{1})(?<text>[^\s""]|[^\s""][^""\n\r\t\v]*[^\s""])\k<begin>:(?<url>([a-z]{3,6}://)?[a-z0-9?&=#%$\-_\.+!*'()]{5,}[a-z0-9#%$\-_+!*'()])", m => {
+				return "[" + m.Groups["text"].Value + "](" + m.Groups["url"].Value + ")";
+			}, RegexOptions.IgnoreCase);
+		}
+
+		public static string ConvertTable(string textileFormatString, string rowSep, string ptnRowSep) {
+			var fReturn = textileFormatString;
 
 			// TABLE, step 1: adjust cells (align, colspan, style) "|_. " > "|# ", "|<. " > "|: ", ...
 			fReturn = Regex.Replace(fReturn, @"^\|[^\n\r]{3,}|$", m1 => {
@@ -141,5 +161,53 @@ namespace Xilium
 
 			return fReturn;
 		}
+
+		public static string ConvertAll(string textileFormatString) {
+			var fReturn = textileFormatString;
+
+			// Find row separator ("\n" or "\r" or "\r\n" ?)
+			var rowSep = getRowSep(textileFormatString);
+			var ptnRowSep = Regex.Escape(rowSep);
+
+			fReturn = ConvertUlLi(fReturn, rowSep, ptnRowSep);
+
+			fReturn = ConvertOlLi(fReturn, rowSep, ptnRowSep);
+
+			fReturn = ConvertHx(fReturn, rowSep, ptnRowSep);
+
+			fReturn = ConvertBr(fReturn, rowSep, ptnRowSep);
+
+			fReturn = ConvertInline(fReturn, rowSep, ptnRowSep);
+
+			fReturn = ConvertTable(fReturn, rowSep, ptnRowSep);
+
+			return fReturn;
+		}
+
+	    public static string ConvertInline(string textileFormatString) {
+			
+			// Find row separator ("\n" or "\r" or "\r\n" ?)
+			var rowSep = getRowSep(textileFormatString);
+			var ptnRowSep = Regex.Escape(rowSep);
+
+			return ConvertInline(textileFormatString, rowSep, ptnRowSep);
+	    }
+
+		public static string ConvertInline(string textileFormatString, string rowSep, string ptnRowSep) {
+			var fReturn = textileFormatString;
+
+			fReturn = ConvertStrong(fReturn, rowSep, ptnRowSep);
+
+			fReturn = ConvertEn(fReturn, rowSep, ptnRowSep);
+
+			fReturn = ConvertCite(fReturn, rowSep, ptnRowSep);
+
+			fReturn = ConvertU(fReturn, rowSep, ptnRowSep);
+
+			fReturn = ConvertA(fReturn, rowSep, ptnRowSep);
+
+			return fReturn;
+		}
+
     }
 }
