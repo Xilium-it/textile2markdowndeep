@@ -61,8 +61,8 @@ namespace Xilium
 		}
 
 		public static string ConvertHx(string textileFormatString, string rowSep, string ptnRowSep) {
-			// Hx: ".h<n>" > "#{n}"
-			return Regex.Replace(textileFormatString, @"^h([1-6])\. ", m => {
+			// Hx: "h<n>." > "#{n}"
+			return Regex.Replace(textileFormatString, @"^h([1-6])\.", m => {
 				return (new string('#', int.Parse(m.Groups[1].Value))) + " ";
 			}, RegexOptions.Multiline);
 		}
