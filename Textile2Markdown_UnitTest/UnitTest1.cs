@@ -55,7 +55,7 @@ namespace Textile2Markdown_UnitTest {
 
 			Assert.AreEqual("Lorem ipsum dolor sit amet, [consectetur adipiscing](http://mysite.net) elit.", Xilium.Textile2MarkdownDeep.ConvertAll("Lorem ipsum dolor sit amet, \"consectetur adipiscing\":http://mysite.net elit."));
 
-			Assert.AreEqual("Lorem ipsum dolor sit amet, [**consectetur adipiscing**](http://mysite.net) elit.", Xilium.Textile2MarkdownDeep.ConvertAll("Lorem ipsum dolor sit amet, \"*consectetur adipiscing*\":http://mysite.net elit."));
+			Assert.AreEqual("Lorem ipsum dolor sit amet, [**consectetur adipiscing**](http://www.terrediurbino.it/urbino/palazzi-storici-e-musei/palazzo-ducale-di-urbino.aspx?entityId=1605) elit.", Xilium.Textile2MarkdownDeep.ConvertAll("Lorem ipsum dolor sit amet, \"*consectetur adipiscing*\":http://www.terrediurbino.it/urbino/palazzi-storici-e-musei/palazzo-ducale-di-urbino.aspx?entityId=1605 elit."));
 
 			Assert.AreEqual("Lorem ipsum dolor sit amet, [consectetur **adipiscing**](http://mysite.net) elit.", Xilium.Textile2MarkdownDeep.ConvertAll("Lorem ipsum dolor sit amet, \"consectetur *adipiscing*\":http://mysite.net elit."));
 

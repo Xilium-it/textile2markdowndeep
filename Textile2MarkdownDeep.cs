@@ -62,7 +62,7 @@ namespace Xilium
 
 		public static string ConvertHx(string textileFormatString, string rowSep, string ptnRowSep) {
 			// Hx: "h<n>." > "#{n}"
-			return Regex.Replace(textileFormatString, @"^h([1-6])\.", m => {
+			return Regex.Replace(textileFormatString, @"^h([1-6])\.[ ]*", m => {
 				return (new string('#', int.Parse(m.Groups[1].Value))) + " ";
 			}, RegexOptions.Multiline);
 		}
@@ -104,7 +104,7 @@ namespace Xilium
 
 		public static string ConvertA(string textileFormatString, string rowSep, string ptnRowSep) {
 			// A: "\"<text>\":<url>" > "[<text>](<url>)"
-			return Regex.Replace(textileFormatString, @"(?<=([\n\r\s]|^))(?<begin>""{1})(?<text>[^\s""]|[^\s""][^""\n\r\t\v]*[^\s""])\k<begin>:(?<url>([a-z]{3,6}://)?[a-z0-9?&=#%$\-_\.+!*'()]{5,}[a-z0-9#%$\-_+!*'()])", m => {
+			return Regex.Replace(textileFormatString, @"(?<=([\n\r\s]|^))(?<begin>""{1})(?<text>[^\s""]|[^\s""][^""\n\r\t\v]*[^\s""])\k<begin>:(?<url>([a-z]{3,6}://)?[a-z0-9?&=#%$/\-_\.+!*'()]{5,}[a-z0-9#%$\-_+!*'()])", m => {
 				return "[" + m.Groups["text"].Value + "](" + m.Groups["url"].Value + ")";
 			}, RegexOptions.IgnoreCase);
 		}
